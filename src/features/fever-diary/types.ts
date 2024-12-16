@@ -1,5 +1,4 @@
-import { MedicationType } from "@/types";
-import { MedicationDoseUnits } from "./constants";
+import { MedicationType, MedicationDoseUnit } from "@/constants";
 
 export interface FeverDiaryEntry {
   id: string;
@@ -8,5 +7,5 @@ export interface FeverDiaryEntry {
   temperature: number;
   medication: MedicationType;
   medicationDose: number;
-  medicationDoseUnits: MedicationDoseUnits;
+  medicationDoseUnits: MedicationDoseUnit;
 }

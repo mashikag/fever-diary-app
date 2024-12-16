@@ -14,7 +14,7 @@ function WelcomeComponent() {
       <p>You can start adding fever entries right away...</p>
 
       <div className="flex flex-row gap-2">
-        <Button onClick={() => navigate({ to: "/entries/new" })}>
+        <Button onClick={() => navigate({ to: "/entries/new", search: { ref: "welcome" } })}>
           Continue without login
         </Button>
         <Button variant={"secondary"} disabled>

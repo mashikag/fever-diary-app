@@ -53,10 +53,11 @@ class FeverDiaryIDBClient {
     return personWithId.id;
   }
 
-  async addEntry(entry: Omit<FeverDiaryEntry, "id">): Promise<void> {
+  async addEntry(entry: Omit<FeverDiaryEntry, "id">): Promise<string> {
     const db = await this.dbPromise;
     const entryWithId = { ...entry, id: this.generateId() };
     await db.put("entries", entryWithId);
+    return entryWithId.id;
   }
 
   async putPerson(person: Person): Promise<void> {
@@ -67,6 +68,11 @@ class FeverDiaryIDBClient {
   async getPersons(): Promise<Person[]> {
     const db = await this.dbPromise;
     return db.getAll("persons");
+  }
+
+  async getPerson(id: string): Promise<Person | undefined> {
+    const db = await this.dbPromise;
+    return db.get("persons", id);
   }
 
   async deletePerson(personId: string): Promise<void> {
@@ -92,6 +98,11 @@ class FeverDiaryIDBClient {
   async deleteEntry(entryId: string): Promise<void> {
     const db = await this.dbPromise;
     await db.delete("entries", entryId);
+  }
+
+  async getEntries(count: number): Promise<FeverDiaryEntry[]> {
+    const db = await this.dbPromise;
+    return db.getAll("entries", null, count);
   }
 }
 

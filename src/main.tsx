@@ -1,42 +1,41 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import Header from "@/components/Header";
-import FeverDiaryIDBClient from "@/lib/idbClient";
+import { Toaster } from "@/components/ui/sonner";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { routeTree } from "./routeTree.gen";
+import FeverDiaryIDBClient from "./lib/idbClient";
 import "./index.css";
 
-// Import the generated route tree
-import { routeTree } from "./routeTree.gen";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+const queryClient = new QueryClient();
 
-const appContext = {
-  feverDiaryClient: FeverDiaryIDBClient.getInstance(),
-};
+const router = createRouter({
+  routeTree,
+  context: {
+    queryClient,
+    idbClient: FeverDiaryIDBClient.getInstance(),
+  },
+  defaultPreload: "intent",
+  // Since we're using React Query, we don't want loader calls to ever be stale
+  // This will ensure that the loader is always called when the route is preloaded or visited
+  defaultPreloadStaleTime: 0,
+});
 
-// Create a new router instance
-const router = createRouter({ routeTree });
-
-// Register the router instance for type safety
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }
 }
 
-const queryClient = new QueryClient();
-
-// Render the app
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <React.StrictMode>
-      <Header />
-      <main className="flex flex-col py-8">
-        <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} context={appContext} />
-        </QueryClientProvider>
-      </main>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <Toaster />
+      </QueryClientProvider>
     </React.StrictMode>
   );
 }

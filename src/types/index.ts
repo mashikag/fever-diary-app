@@ -1,3 +1,5 @@
+import { MedicationType } from "@/constants";
+
 export interface Person {
   id: string;
   name: string;
@@ -8,10 +10,8 @@ export interface Person {
 export interface FeverDiaryEntry {
   id: string;
   personId: string;
-  timestamp: Date;
+  date: Date;
   temperatureCelsius?: number;
-  medicationType?: string;
-  medicationDosage?: string;
+  medicationType?: MedicationType;
+  medicationDosage?: number;
 }
-
-export type MedicationType = "Paracetamol" | "Ibuprofen" | "Other";

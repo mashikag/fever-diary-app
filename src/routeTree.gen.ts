@@ -14,6 +14,8 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as WelcomeImport } from './routes/welcome'
 import { Route as EntriesIndexImport } from './routes/entries/index'
 import { Route as EntriesNewImport } from './routes/entries/new'
+import { Route as PersonsPersonIdIndexImport } from './routes/persons/$personId/index'
+import { Route as PersonsPersonIdEntriesImport } from './routes/persons/$personId/entries'
 
 // Create/Update Routes
 
@@ -32,6 +34,18 @@ const EntriesIndexRoute = EntriesIndexImport.update({
 const EntriesNewRoute = EntriesNewImport.update({
   id: '/entries/new',
   path: '/entries/new',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PersonsPersonIdIndexRoute = PersonsPersonIdIndexImport.update({
+  id: '/persons/$personId/',
+  path: '/persons/$personId/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PersonsPersonIdEntriesRoute = PersonsPersonIdEntriesImport.update({
+  id: '/persons/$personId/entries',
+  path: '/persons/$personId/entries',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -60,6 +74,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EntriesIndexImport
       parentRoute: typeof rootRoute
     }
+    '/persons/$personId/entries': {
+      id: '/persons/$personId/entries'
+      path: '/persons/$personId/entries'
+      fullPath: '/persons/$personId/entries'
+      preLoaderRoute: typeof PersonsPersonIdEntriesImport
+      parentRoute: typeof rootRoute
+    }
+    '/persons/$personId/': {
+      id: '/persons/$personId/'
+      path: '/persons/$personId'
+      fullPath: '/persons/$personId'
+      preLoaderRoute: typeof PersonsPersonIdIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -69,12 +97,16 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof WelcomeRoute
   '/entries/new': typeof EntriesNewRoute
   '/entries': typeof EntriesIndexRoute
+  '/persons/$personId/entries': typeof PersonsPersonIdEntriesRoute
+  '/persons/$personId': typeof PersonsPersonIdIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/welcome': typeof WelcomeRoute
   '/entries/new': typeof EntriesNewRoute
   '/entries': typeof EntriesIndexRoute
+  '/persons/$personId/entries': typeof PersonsPersonIdEntriesRoute
+  '/persons/$personId': typeof PersonsPersonIdIndexRoute
 }
 
 export interface FileRoutesById {
@@ -82,14 +114,32 @@ export interface FileRoutesById {
   '/welcome': typeof WelcomeRoute
   '/entries/new': typeof EntriesNewRoute
   '/entries/': typeof EntriesIndexRoute
+  '/persons/$personId/entries': typeof PersonsPersonIdEntriesRoute
+  '/persons/$personId/': typeof PersonsPersonIdIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/welcome' | '/entries/new' | '/entries'
+  fullPaths:
+    | '/welcome'
+    | '/entries/new'
+    | '/entries'
+    | '/persons/$personId/entries'
+    | '/persons/$personId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/welcome' | '/entries/new' | '/entries'
-  id: '__root__' | '/welcome' | '/entries/new' | '/entries/'
+  to:
+    | '/welcome'
+    | '/entries/new'
+    | '/entries'
+    | '/persons/$personId/entries'
+    | '/persons/$personId'
+  id:
+    | '__root__'
+    | '/welcome'
+    | '/entries/new'
+    | '/entries/'
+    | '/persons/$personId/entries'
+    | '/persons/$personId/'
   fileRoutesById: FileRoutesById
 }
 
@@ -97,12 +147,16 @@ export interface RootRouteChildren {
   WelcomeRoute: typeof WelcomeRoute
   EntriesNewRoute: typeof EntriesNewRoute
   EntriesIndexRoute: typeof EntriesIndexRoute
+  PersonsPersonIdEntriesRoute: typeof PersonsPersonIdEntriesRoute
+  PersonsPersonIdIndexRoute: typeof PersonsPersonIdIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   WelcomeRoute: WelcomeRoute,
   EntriesNewRoute: EntriesNewRoute,
   EntriesIndexRoute: EntriesIndexRoute,
+  PersonsPersonIdEntriesRoute: PersonsPersonIdEntriesRoute,
+  PersonsPersonIdIndexRoute: PersonsPersonIdIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -117,7 +171,9 @@ export const routeTree = rootRoute
       "children": [
         "/welcome",
         "/entries/new",
-        "/entries/"
+        "/entries/",
+        "/persons/$personId/entries",
+        "/persons/$personId/"
       ]
     },
     "/welcome": {
@@ -128,6 +184,12 @@ export const routeTree = rootRoute
     },
     "/entries/": {
       "filePath": "entries/index.tsx"
+    },
+    "/persons/$personId/entries": {
+      "filePath": "persons/$personId/entries.tsx"
+    },
+    "/persons/$personId/": {
+      "filePath": "persons/$personId/index.tsx"
     }
   }
 }
