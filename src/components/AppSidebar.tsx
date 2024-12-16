@@ -28,7 +28,11 @@ function PersonsSidebarGroup() {
       </SidebarGroupAction>
       <SidebarGroupContent>
         <SidebarMenu>
-          {isLoading && [<SidebarMenuSkeleton />, <SidebarMenuSkeleton />, <SidebarMenuSkeleton />]}
+          {isLoading && [
+            <SidebarMenuSkeleton key={1} />,
+            <SidebarMenuSkeleton key={2} />,
+            <SidebarMenuSkeleton key={3} />,
+          ]}
           {data?.map((person) => (
             <SidebarMenuItem key={person.id}>
               <SidebarMenuButton

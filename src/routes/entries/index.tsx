@@ -16,7 +16,6 @@ export const Route = createFileRoute("/entries/")({
 });
 
 function RouteComponent() {
-  console.log("RouteComponent");
   const router = Route.useNavigate();
   const { personId } = Route.useSearch();
   const { data: entries } = useDiaryEntries(personId);

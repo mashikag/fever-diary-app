@@ -14,11 +14,12 @@ import {
 } from "@/components/ui/form";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 type PersonFormValues = z.infer<typeof personSchema>;
 
 export interface PersonFormProps {
-  onSubmit: (values: PersonFormValues) => void;
+  onSubmit: (values: PersonFormValues) => Promise<void>;
   defaultValues?: Partial<PersonFormValues>;
 }
 
@@ -41,6 +42,11 @@ function PersonForm({ onSubmit, defaultValues }: PersonFormProps) {
       console.error(e);
     }
   }
+
+  useEffect(() => {
+    // Fixes an issue where the stale defaultValues are used, the first time the user comes back to the form after an edit
+    form.reset(defaultValues);
+  }, [defaultValues, form]);
 
   return (
     <Form {...form}>

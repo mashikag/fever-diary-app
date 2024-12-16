@@ -7,7 +7,6 @@ import { EntriesTableCard } from "@/features/fever-diary/components/Cards/Entrie
 
 export const Route = createFileRoute("/persons/$personId/entries")({
   loader: async ({ params, context: { idbClient } }) => {
-    console.log("Params:", params);
     if (!params.personId) {
       throw new Error("No personId provided");
     }
@@ -20,7 +19,6 @@ export const Route = createFileRoute("/persons/$personId/entries")({
     const entries = await idbClient.getEntriesByPerson(person.id);
 
     setSelectedPersonId(person.id);
-    console.log("Selected personId:", person.id);
 
     return { person, entries };
   },
@@ -28,12 +26,8 @@ export const Route = createFileRoute("/persons/$personId/entries")({
 });
 
 function RouteComponent() {
-  console.log("RouteComponent");
   const router = Route.useNavigate();
   const { person, entries } = Route.useLoaderData();
-
-  console.log("Person:", person);
-  console.log("Entries:", entries);
 
   return (
     <div className="flex flex-col gap-6 w-full">

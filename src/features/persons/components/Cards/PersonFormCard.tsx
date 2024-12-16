@@ -1,10 +1,18 @@
+import { Trash } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import PersonForm, { PersonFormProps } from "../PersonForm";
+import { Button } from "@/components/ui/button";
 
 function PersonFormCard(props: PersonFormProps) {
   return (
     <Card variant="modern">
-      <CardHeader>
+      <CardHeader
+        action={
+          <Button variant="destructive">
+            <Trash />
+          </Button>
+        }
+      >
         <CardTitle>Person Details</CardTitle>
       </CardHeader>
       <CardContent>

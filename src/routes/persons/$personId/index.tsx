@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import PersonFormCard from "@/features/persons/components/Cards/PersonFormCard";
+import { useEditPersonMutation } from "@/features/persons/hooks/useEditPersonMutation";
 import { personQueryOptions } from "@/features/persons/queries";
+import { Person } from "@/types";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
@@ -21,6 +23,26 @@ function EditPersonPage() {
   const { ref } = Route.useSearch();
   const { data: person } = useSuspenseQuery(personQueryOptions(personId));
   const navigate = Route.useNavigate();
+  const { mutate: editPerson } = useEditPersonMutation();
+
+  const handleSubmit = (person: Omit<Person, "id">) => {
+    return new Promise<void>((resolve, reject) => {
+      editPerson(
+        {
+          id: personId,
+          ...person,
+        },
+        {
+          onSuccess: () => {
+            resolve();
+          },
+          onError: () => {
+            reject();
+          },
+        }
+      );
+    });
+  };
 
   return (
     <>
@@ -44,7 +66,7 @@ function EditPersonPage() {
         </div>
       )}
 
-      <PersonFormCard defaultValues={person} onSubmit={() => {}} />
+      <PersonFormCard defaultValues={person} onSubmit={handleSubmit} />
     </>
   );
 }
