@@ -13,7 +13,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
-import { toast } from "sonner";
 import { useEffect } from "react";
 
 type PersonFormValues = z.infer<typeof personSchema>;
@@ -33,16 +32,6 @@ function PersonForm({ onSubmit, defaultValues }: PersonFormProps) {
     },
   });
 
-  async function handleSubmit(values: PersonFormValues) {
-    try {
-      await onSubmit(values);
-      toast.success("Person saved successfully!");
-    } catch (e) {
-      toast.error("Failed to save person.");
-      console.error(e);
-    }
-  }
-
   useEffect(() => {
     // Fixes an issue where the stale defaultValues are used, the first time the user comes back to the form after an edit
     form.reset(defaultValues);
@@ -50,7 +39,7 @@ function PersonForm({ onSubmit, defaultValues }: PersonFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
           name="name"

@@ -11,15 +11,10 @@ export const useCreateEntryMutation = () => {
       const id = await client.addEntry(newEntry);
       return { ...newEntry, id };
     },
-    onSuccess: (newEntry) => {
+    onSuccess: ({ personId }) => {
       queryClient.invalidateQueries({
-        queryKey: ["diaryEntries"],
+        queryKey: ["entries", personId],
       });
-      // Optionally, update the cache with the new entry
-      queryClient.setQueryData<FeverDiaryEntry[]>(
-        ["diaryEntries"],
-        (oldEntries) => [...(oldEntries || []), newEntry]
-      );
     },
   });
 

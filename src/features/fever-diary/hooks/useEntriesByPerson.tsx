@@ -1,9 +1,9 @@
 import FeverDiaryIDBClient from "@/lib/idbClient";
 import { useQuery } from "@tanstack/react-query";
 
-const useDiaryEntries = (personId: string) => {
+const useEntriesByPerson = (personId: string) => {
   return useQuery({
-    queryKey: ["fever-diary-entries", personId],
+    queryKey: ["entries", personId],
     queryFn: () => {
       const client = FeverDiaryIDBClient.getInstance();
       return client.getEntriesByPerson(personId);
@@ -12,4 +12,4 @@ const useDiaryEntries = (personId: string) => {
   });
 };
 
-export default useDiaryEntries;
+export default useEntriesByPerson;

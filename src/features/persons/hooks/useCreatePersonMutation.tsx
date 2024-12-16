@@ -11,15 +11,10 @@ export const useCreatePersonMutation = () => {
       const id = await client.addPerson(newPerson);
       return { ...newPerson, id };
     },
-    onSuccess: (newPerson) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["persons"],
       });
-      // Optionally, you can update the cache with the new person
-      queryClient.setQueryData<Person[]>(["persons"], (oldPersons) => [
-        ...(oldPersons || []),
-        newPerson,
-      ]);
     },
   });
 
