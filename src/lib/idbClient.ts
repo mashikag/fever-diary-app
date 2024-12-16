@@ -82,7 +82,28 @@ class FeverDiaryIDBClient {
 
   async deletePerson(personId: string): Promise<void> {
     const db = await this.dbPromise;
-    await db.delete(StoreName.Persons, personId);
+    const tx = db.transaction([StoreName.Entries, StoreName.Persons], "readwrite");
+
+    // Delete all entries for the person
+    const entries = tx.objectStore(StoreName.Entries);
+    const entriesByPerson = entries.index("by-person");
+    const cursor = await entriesByPerson.openCursor(personId);
+
+    // Delete each entry
+    const deletePromises: Promise<void>[] = [];
+    while (cursor) {
+      const entry = cursor.value;
+      deletePromises.push(entries.delete(entry.id));
+      await cursor.continue();
+    }
+    await Promise.all(deletePromises);
+
+    // Delete the person
+    const persons = tx.objectStore(StoreName.Persons);
+    await persons.delete(personId);
+
+    // Wait for all the operations to complete
+    await tx.done;
   }
 
   async putEntry(entry: FeverDiaryEntry): Promise<void> {
@@ -108,6 +129,11 @@ class FeverDiaryIDBClient {
   async getEntries(count: number): Promise<FeverDiaryEntry[]> {
     const db = await this.dbPromise;
     return db.getAll(StoreName.Entries, null, count);
+  }
+
+  async getAllEntries(): Promise<FeverDiaryEntry[]> {
+    const db = await this.dbPromise;
+    return db.getAll(StoreName.Entries);
   }
 }
 

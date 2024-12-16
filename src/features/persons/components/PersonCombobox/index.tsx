@@ -1,6 +1,6 @@
 import { useCreatePersonMutation } from "../../hooks/useCreatePersonMutation";
 import { useMemo, useState } from "react";
-import { usePersons } from "../../hooks/useGetPersons";
+import { usePersons } from "../../hooks/usePersons";
 import Combobox from "@/components/ui/combobox";
 import {
   AlertDialog,

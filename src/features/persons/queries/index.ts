@@ -1,1 +1,0 @@
-export { personQueryOptions } from "./personQueryOptions";

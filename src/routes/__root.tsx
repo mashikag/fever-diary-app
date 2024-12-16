@@ -1,6 +1,8 @@
 import AppSidebar from "@/components/AppSidebar";
 import Header from "@/components/Header";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { personsQueryOptions } from "@/features/persons/hooks/usePersons";
+import { personQueryOptions } from "@/features/persons/hooks/usePerson";
 import FeverDiaryIDBClient from "@/lib/idbClient";
 import { getSelectedPersonId } from "@/lib/localStorage";
 import { QueryClient } from "@tanstack/react-query";
@@ -12,19 +14,31 @@ export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
   idbClient: FeverDiaryIDBClient;
 }>()({
-  beforeLoad: async ({ context: { idbClient } }) => {
+  beforeLoad: async ({ context: { queryClient } }) => {
     if (location.pathname === "/") {
-      const persons = await idbClient.getPersons();
+      const persons = await queryClient.ensureQueryData(personsQueryOptions());
 
       if (persons.length) {
         let personId = getSelectedPersonId();
+
         if (!personId) {
           personId = persons[0].id;
         }
 
-        if (personId) {
+        let person;
+        try {
+          person = await queryClient.ensureQueryData(personQueryOptions(personId));
+        } catch (error) {
+          console.error(error);
+        }
+
+        if (person) {
           throw redirect({
             to: `/persons/${personId}/entries`,
+          });
+        } else {
+          throw redirect({
+            to: `/entries`,
           });
         }
       }

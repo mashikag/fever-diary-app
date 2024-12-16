@@ -13,7 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuSkeleton,
 } from "./ui/sidebar";
-import { usePersons } from "@/features/persons/hooks/useGetPersons";
+import { usePersons } from "@/features/persons/hooks/usePersons";
 import { useNavigate } from "@tanstack/react-router";
 
 function PersonsSidebarGroup() {
