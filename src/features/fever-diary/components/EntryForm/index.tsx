@@ -26,36 +26,38 @@ import { useState } from "react";
 
 export type EntryFormValues = z.infer<typeof entrySchema>;
 
-type EntryFormProps = {
-  defaultValues?: EntryFormValues;
+export type EntryFormProps = {
+  defaultValues?: Partial<EntryFormValues>;
   onSubmit: (values: EntryFormValues) => Promise<void>;
 };
 
-const formDefaults: EntryFormValues = {
-  date: new Date(),
-  personId: "",
-  temperature: undefined,
-  medicationType: undefined,
-  medicationDosage: undefined,
+const mergeDefaults = (overrides: Partial<EntryFormValues> = {}): EntryFormValues => {
+  console.log("mergeDefaults should not re-run on every render. useMemo perhaps?");
+  return {
+    date: new Date(),
+    personId: "",
+    temperature: undefined,
+    medicationType: undefined,
+    medicationDosage: undefined,
+    ...overrides,
+  };
 };
 
-function EntryForm({ defaultValues = formDefaults, onSubmit }: EntryFormProps) {
-  const [showTemperature, setShowTemperature] = useState(!!defaultValues.temperature);
+function EntryForm({ defaultValues, onSubmit }: EntryFormProps) {
+  const [defaults] = useState(mergeDefaults(defaultValues));
+  const [showTemperature, setShowTemperature] = useState(!!defaults.temperature);
   const [showMedication, setShowMedication] = useState(
-    !!(defaultValues.medicationType || defaultValues.medicationDosage)
+    !!(defaults.medicationType || defaults.medicationDosage)
   );
 
   const form = useForm<EntryFormValues>({
     resolver: zodResolver(entrySchema),
-    defaultValues,
+    defaultValues: defaults,
   });
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 rounded-md border bg-gray-50 p-8 shadow-sm"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 rounded-md p-8">
         <FormField
           control={form.control}
           name="date"
