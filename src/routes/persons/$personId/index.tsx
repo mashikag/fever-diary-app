@@ -90,6 +90,7 @@ function EditPersonPage() {
       )}
 
       <PersonFormCard
+        title="Person Details"
         defaultValues={person}
         onSubmit={handleSubmit}
         onDelete={handlePersonDelete}
