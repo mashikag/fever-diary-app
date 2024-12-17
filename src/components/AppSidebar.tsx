@@ -24,7 +24,8 @@ function PersonsSidebarGroup() {
     <SidebarGroup>
       <SidebarGroupLabel>Persons</SidebarGroupLabel>
       <SidebarGroupAction title="Add Project">
-        <Plus /> <span className="sr-only">Add Project</span>
+        <Plus onClick={() => navigate({ to: "/persons/new" })} />
+        <span className="sr-only">Add Person</span>
       </SidebarGroupAction>
       <SidebarGroupContent>
         <SidebarMenu>
