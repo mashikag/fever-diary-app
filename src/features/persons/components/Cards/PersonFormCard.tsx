@@ -15,11 +15,12 @@ import {
 } from "@/components/ui/alert-dialog";
 
 type PersonFormCardProps = {
+  title: string;
   personId?: string;
   onDelete?: () => void;
 } & PersonFormProps;
 
-function PersonFormCard({ onDelete, ...props }: PersonFormCardProps) {
+function PersonFormCard({ title, onDelete, ...props }: PersonFormCardProps) {
   return (
     <Card variant="modern">
       <AlertDialog>
@@ -34,7 +35,7 @@ function PersonFormCard({ onDelete, ...props }: PersonFormCardProps) {
             )
           }
         >
-          <CardTitle>Person Details</CardTitle>
+          <CardTitle>{title}</CardTitle>
         </CardHeader>
 
         <AlertDialogContent>
