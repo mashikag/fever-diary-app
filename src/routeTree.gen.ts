@@ -15,6 +15,7 @@ import { Route as WelcomeImport } from './routes/welcome'
 import { Route as EntriesIndexImport } from './routes/entries/index'
 import { Route as PersonsNewImport } from './routes/persons/new'
 import { Route as EntriesNewImport } from './routes/entries/new'
+import { Route as EntriesEntryIdImport } from './routes/entries/$entryId'
 import { Route as PersonsPersonIdIndexImport } from './routes/persons/$personId/index'
 import { Route as PersonsPersonIdEntriesImport } from './routes/persons/$personId/entries'
 
@@ -44,6 +45,12 @@ const EntriesNewRoute = EntriesNewImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const EntriesEntryIdRoute = EntriesEntryIdImport.update({
+  id: '/entries/$entryId',
+  path: '/entries/$entryId',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const PersonsPersonIdIndexRoute = PersonsPersonIdIndexImport.update({
   id: '/persons/$personId/',
   path: '/persons/$personId/',
@@ -65,6 +72,13 @@ declare module '@tanstack/react-router' {
       path: '/welcome'
       fullPath: '/welcome'
       preLoaderRoute: typeof WelcomeImport
+      parentRoute: typeof rootRoute
+    }
+    '/entries/$entryId': {
+      id: '/entries/$entryId'
+      path: '/entries/$entryId'
+      fullPath: '/entries/$entryId'
+      preLoaderRoute: typeof EntriesEntryIdImport
       parentRoute: typeof rootRoute
     }
     '/entries/new': {
@@ -109,6 +123,7 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/welcome': typeof WelcomeRoute
+  '/entries/$entryId': typeof EntriesEntryIdRoute
   '/entries/new': typeof EntriesNewRoute
   '/persons/new': typeof PersonsNewRoute
   '/entries': typeof EntriesIndexRoute
@@ -118,6 +133,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/welcome': typeof WelcomeRoute
+  '/entries/$entryId': typeof EntriesEntryIdRoute
   '/entries/new': typeof EntriesNewRoute
   '/persons/new': typeof PersonsNewRoute
   '/entries': typeof EntriesIndexRoute
@@ -128,6 +144,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/welcome': typeof WelcomeRoute
+  '/entries/$entryId': typeof EntriesEntryIdRoute
   '/entries/new': typeof EntriesNewRoute
   '/persons/new': typeof PersonsNewRoute
   '/entries/': typeof EntriesIndexRoute
@@ -139,6 +156,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/welcome'
+    | '/entries/$entryId'
     | '/entries/new'
     | '/persons/new'
     | '/entries'
@@ -147,6 +165,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/welcome'
+    | '/entries/$entryId'
     | '/entries/new'
     | '/persons/new'
     | '/entries'
@@ -155,6 +174,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/welcome'
+    | '/entries/$entryId'
     | '/entries/new'
     | '/persons/new'
     | '/entries/'
@@ -165,6 +185,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   WelcomeRoute: typeof WelcomeRoute
+  EntriesEntryIdRoute: typeof EntriesEntryIdRoute
   EntriesNewRoute: typeof EntriesNewRoute
   PersonsNewRoute: typeof PersonsNewRoute
   EntriesIndexRoute: typeof EntriesIndexRoute
@@ -174,6 +195,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   WelcomeRoute: WelcomeRoute,
+  EntriesEntryIdRoute: EntriesEntryIdRoute,
   EntriesNewRoute: EntriesNewRoute,
   PersonsNewRoute: PersonsNewRoute,
   EntriesIndexRoute: EntriesIndexRoute,
@@ -192,6 +214,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/welcome",
+        "/entries/$entryId",
         "/entries/new",
         "/persons/new",
         "/entries/",
@@ -201,6 +224,9 @@ export const routeTree = rootRoute
     },
     "/welcome": {
       "filePath": "welcome.tsx"
+    },
+    "/entries/$entryId": {
+      "filePath": "entries/$entryId.tsx"
     },
     "/entries/new": {
       "filePath": "entries/new.tsx"

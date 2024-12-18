@@ -35,7 +35,7 @@ function RouteComponent() {
 
       <EntriesTableCard person={person} data={entries || []} />
 
-      <div className="absolute flex w-full left-0 bottom-4 justify-center">
+      <div className="fixed flex w-full left-0 bottom-4 justify-center">
         <Button
           onClick={() =>
             router({ to: "/entries/new", search: { ref: "entries", personId: person.id } })

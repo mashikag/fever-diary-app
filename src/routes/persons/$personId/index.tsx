@@ -13,9 +13,6 @@ export const Route = createFileRoute("/persons/$personId/")({
   validateSearch: z.object({
     ref: z.literal("new-entry").or(z.literal("entries")).optional(),
   }),
-  beforeLoad: () => {
-    console.log("beforeLoad");
-  },
   loader: async ({ context: { queryClient }, params: { personId } }) => {
     await queryClient.ensureQueryData(personQueryOptions(personId));
   },
