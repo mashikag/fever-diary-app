@@ -3,7 +3,7 @@ import FeverDiaryIDBClient from "@/lib/idbClient";
 
 export function entriesQueryOptions() {
   return {
-    queryKey: ["entries"],
+    queryKey: ["entries", "all"],
     queryFn: () => {
       const client = FeverDiaryIDBClient.getInstance();
       return client.getAllEntries();

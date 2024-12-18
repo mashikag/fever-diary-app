@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { EntryFormCard } from "@/features/fever-diary/components/Cards/EntryFormCard";
+import useDeleteEntryMutation from "@/features/fever-diary/hooks/useDeleteEntryMutation";
 import useEditEntryMutation from "@/features/fever-diary/hooks/useEditEntryMutation";
 import useEntry, { entryQueryOptions } from "@/features/fever-diary/hooks/useEntry";
 import { FeverDiaryEntry } from "@/types";
@@ -32,6 +33,7 @@ function RouteComponent() {
   const { entryId } = Route.useParams();
   const { data: entry } = useEntry(entryId);
   const { mutateAsync: editEntry } = useEditEntryMutation();
+  const { mutateAsync: deleteEntry } = useDeleteEntryMutation();
 
   const handleSubmit = async (entry: Omit<FeverDiaryEntry, "id">) => {
     try {
@@ -46,6 +48,17 @@ function RouteComponent() {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      await deleteEntry(entryId);
+      toast.success("Entry deleted successfully");
+      navigate(goBackOpts);
+    } catch (error) {
+      console.error("Error deleting entry:", error);
+      toast.error("Failed to delete entry");
+    }
+  };
+
   return (
     <>
       <div className="mb-4 flex flex-row items-center">
@@ -54,7 +67,12 @@ function RouteComponent() {
         </Button>
       </div>
 
-      <EntryFormCard defaultValues={entry} onSubmit={handleSubmit} />
+      <EntryFormCard
+        title="Edit Entry"
+        defaultValues={entry}
+        onSubmit={handleSubmit}
+        onDelete={handleDelete}
+      />
     </>
   );
 }

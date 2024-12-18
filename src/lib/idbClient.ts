@@ -121,9 +121,13 @@ class FeverDiaryIDBClient {
     return db.getAllFromIndex(StoreName.Entries, "by-person", personId);
   }
 
-  async deleteEntry(entryId: string): Promise<void> {
+  async deleteEntry(entryId: string): Promise<FeverDiaryEntry | undefined> {
     const db = await this.dbPromise;
-    await db.delete(StoreName.Entries, entryId);
+    const tx = db.transaction([StoreName.Entries], "readwrite");
+    const entry = tx.objectStore(StoreName.Entries).get(entryId);
+    tx.objectStore(StoreName.Entries).delete(entryId);
+    await tx.done;
+    return entry;
   }
 
   async getEntries(count: number): Promise<FeverDiaryEntry[]> {

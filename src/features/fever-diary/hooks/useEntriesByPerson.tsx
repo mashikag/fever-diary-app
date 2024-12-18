@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const useEntriesByPerson = (personId: string) => {
   return useQuery({
-    queryKey: ["entries", personId],
+    queryKey: ["entries", "by-person", personId],
     queryFn: () => {
       const client = FeverDiaryIDBClient.getInstance();
       return client.getEntriesByPerson(personId);
