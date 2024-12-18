@@ -68,7 +68,7 @@ function RouteComponent() {
       </div>
 
       <EntryFormCard
-        title="Edit Entry"
+        title="Edit Diary Entry"
         defaultValues={entry}
         onSubmit={handleSubmit}
         onDelete={handleDelete}

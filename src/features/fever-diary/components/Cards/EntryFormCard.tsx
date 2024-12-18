@@ -41,7 +41,7 @@ export function EntryFormCard({ onDelete, title, ...props }: EntryFormCard) {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the entry.
+              This action cannot be undone. This will permanently delete the diary entry.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
