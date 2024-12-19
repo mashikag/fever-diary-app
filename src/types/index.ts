@@ -1,4 +1,5 @@
 import { MedicationType } from "@/constants";
+import { IbuprofenForm, ParacetamolForm } from "@/constants/medicationType";
 
 export interface Person {
   id: string;
@@ -7,11 +8,19 @@ export interface Person {
   weight?: number;
 }
 
-export interface FeverDiaryEntry {
+export interface FeverDiaryEntry<TMed extends MedicationType = MedicationType> {
   id: string;
   personId: string;
   date: Date;
-  temperatureCelsius?: number;
-  medicationType?: MedicationType;
-  medicationDosage?: number;
+  tempC?: number;
+  medType?: TMed;
+  medForm?: MedicationForm<TMed>;
+  medFormStrength?: number;
+  medFormDose?: number;
 }
+
+export type MedicationForm<TMed extends MedicationType> = TMed extends "paracetamol"
+  ? ParacetamolForm
+  : TMed extends "ibuprofen"
+    ? IbuprofenForm
+    : never;

@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { FeverDiaryEntry } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
+import medications from "@/features/fever-diary/utils/medications";
 
 export const columns: ColumnDef<FeverDiaryEntry>[] = [
   {
@@ -32,11 +33,15 @@ export const columns: ColumnDef<FeverDiaryEntry>[] = [
     header: "Temperature",
   },
   {
-    accessorKey: "medicationType",
+    accessorKey: "medType",
     header: "Medication",
+    cell: ({ row }) => {
+      const medType = row.getValue<FeverDiaryEntry["medType"]>("medType");
+      return medType ? medications[medType].label : "None";
+    },
   },
   {
-    accessorKey: "medicationDosage",
+    accessorKey: "medFormDose",
     header: "Dose",
   },
 ];
