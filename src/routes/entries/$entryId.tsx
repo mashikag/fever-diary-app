@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { EntryFormCard } from "@/features/fever-diary/components/Cards/EntryFormCard";
+import { EntryFormValues } from "@/features/fever-diary/components/EntryForm";
 import useDeleteEntryMutation from "@/features/fever-diary/hooks/useDeleteEntryMutation";
 import useEditEntryMutation from "@/features/fever-diary/hooks/useEditEntryMutation";
 import useEntry, { entryQueryOptions } from "@/features/fever-diary/hooks/useEntry";
-import { FeverDiaryEntry } from "@/types";
+import { fromFeverDiaryEntry, toFeverDiaryEntry } from "@/features/fever-diary/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
+import { useMemo } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/entries/$entryId")({
@@ -32,10 +34,12 @@ function RouteComponent() {
   const { goBackOpts } = Route.useLoaderData();
   const { entryId } = Route.useParams();
   const { data: entry } = useEntry(entryId);
+  const initialValues = useMemo(() => entry && fromFeverDiaryEntry(entry), [entry]);
   const { mutateAsync: editEntry } = useEditEntryMutation();
   const { mutateAsync: deleteEntry } = useDeleteEntryMutation();
 
-  const handleSubmit = async (entry: Omit<FeverDiaryEntry, "id">) => {
+  const handleSubmit = async (data: EntryFormValues) => {
+    const entry = toFeverDiaryEntry(data);
     try {
       await editEntry({
         id: entryId,
@@ -69,7 +73,7 @@ function RouteComponent() {
 
       <EntryFormCard
         title="Edit Diary Entry"
-        defaultValues={entry}
+        defaultValues={initialValues}
         onSubmit={handleSubmit}
         onDelete={handleDelete}
       />

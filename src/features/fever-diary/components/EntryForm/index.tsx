@@ -22,7 +22,8 @@ import {
 import PersonCombobox from "@/features/persons/components/PersonCombobox";
 import { DateTimePicker, TimePicker } from "@/components/ui/date-time-picker";
 import { Switch } from "@/components/ui/switch";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import medications from "@/features/fever-diary/utils/medications";
 
 export type EntryFormValues = z.infer<typeof entrySchema>;
 
@@ -31,24 +32,16 @@ export type EntryFormProps = {
   onSubmit: (values: EntryFormValues) => Promise<void>;
 };
 
-const mergeDefaults = (overrides: Partial<EntryFormValues> = {}): EntryFormValues => {
-  console.log("mergeDefaults should not re-run on every render. useMemo perhaps?");
-  return {
-    date: new Date(),
-    personId: "",
-    temperature: undefined,
-    medicationType: undefined,
-    medicationDosage: undefined,
-    ...overrides,
-  };
-};
+const mergeDefaults = (overrides: Partial<EntryFormValues> = {}): EntryFormValues => ({
+  date: new Date(),
+  personId: "",
+  ...overrides,
+});
 
 function EntryForm({ defaultValues, onSubmit }: EntryFormProps) {
-  const [defaults] = useState(mergeDefaults(defaultValues));
+  const defaults = useMemo(() => mergeDefaults(defaultValues), [defaultValues]);
   const [showTemperature, setShowTemperature] = useState(!!defaults.temperature);
-  const [showMedication, setShowMedication] = useState(
-    !!(defaults.medicationType || defaults.medicationDosage)
-  );
+  const [showMedication, setShowMedication] = useState(!!defaults.medication);
 
   const form = useForm<EntryFormValues>({
     resolver: zodResolver(entrySchema),
@@ -162,8 +155,7 @@ function EntryForm({ defaultValues, onSubmit }: EntryFormProps) {
             onCheckedChange={(checked) => {
               setShowMedication(checked);
               if (!checked) {
-                form.setValue("medicationType", undefined);
-                form.setValue("medicationDosage", undefined);
+                form.setValue("medication", undefined);
               }
             }}
           />
@@ -182,46 +174,136 @@ function EntryForm({ defaultValues, onSubmit }: EntryFormProps) {
         >
           <FormField
             control={form.control}
-            name="medicationType"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Medication Type</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select medication type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="ibuprofen">Ibuprofen</SelectItem>
-                    <SelectItem value="paracetamol">Paracetamol</SelectItem>
-                    <SelectItem value="aspirin">Aspirin</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
+            name="medication.type"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Medication Type</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select medication type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.entries(medications).map(([type, { label }]) => (
+                        <SelectItem key={type} value={type}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
 
           <FormField
             control={form.control}
-            name="medicationDosage"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Medication Dosage (mg)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    step="1"
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            name="medication.form.type"
+            render={({ field }) => {
+              const medType = form.getValues("medication.type");
+              const medForms = medType ? medications[medType].forms : [];
+
+              return (
+                <FormItem>
+                  <FormLabel>Medication Form</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    disabled={!medType}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select medication form" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {medForms.map(({ form, label }) => (
+                        <SelectItem key={form} value={form}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+
+          <FormField
+            control={form.control}
+            name="medication.form.strength"
+            render={({ field }) => {
+              const medType = form.watch("medication")?.type;
+              const medFormType = form.watch("medication.form.type");
+
+              const disabled = !medType || !medFormType;
+              const medFormVariants =
+                !disabled && medications[medType].forms.find((f) => f.form === medFormType);
+
+              return (
+                <FormItem>
+                  <FormLabel>Medication Strength</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value === undefined ? "" : String(field.value)}
+                    disabled={disabled}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select medication strength" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {medFormVariants &&
+                        medFormVariants.variants.map(({ strength, label }) => (
+                          <SelectItem key={strength} value={String(strength)}>
+                            {label}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+
+          <FormField
+            control={form.control}
+            name="medication.form.dose"
+            render={({ field }) => {
+              const medType = form.getValues("medication.type");
+              const medFormType = form.watch("medication.form.type");
+              const medFormStrength = form.watch("medication.form.strength");
+
+              const disabled = !medType || !medFormType || !medFormStrength;
+
+              const medForm =
+                !disabled && medications[medType].forms.find((f) => f.form === medFormType);
+              const doseUnit = medForm?.doseUnit ? `(${medForm.doseUnit})` : "";
+
+              return (
+                <FormItem>
+                  <FormLabel disabled={disabled}>Medication Dosage {doseUnit}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="1"
+                      disabled={disabled}
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
         </div>
 
