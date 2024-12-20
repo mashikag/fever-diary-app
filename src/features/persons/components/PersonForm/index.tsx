@@ -12,7 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { DateTimePicker } from "@/components/ui/date-time-picker";
+import { DatetimePicker } from "@/components/ui/date-time-picker";
 import { useEffect } from "react";
 
 type PersonFormValues = z.infer<typeof personSchema>;
@@ -61,7 +61,13 @@ function PersonForm({ onSubmit, defaultValues }: PersonFormProps) {
             <FormItem>
               <FormLabel>Date of Birth</FormLabel>
               <FormControl>
-                <DateTimePicker value={field.value} onChange={field.onChange} granularity="day" />
+                <DatetimePicker
+                  value={field.value}
+                  onChange={(e) => {
+                    field.onChange(e);
+                  }}
+                  format={[["days", "months", "years"]]}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

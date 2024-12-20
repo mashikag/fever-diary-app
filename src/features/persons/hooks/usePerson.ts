@@ -4,9 +4,10 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 export function personQueryOptions(personId: string) {
   return {
     queryKey: ["person", personId],
-    queryFn: () => {
+    queryFn: async () => {
       const idbClient = FeverDiaryIDBClient.getInstance();
-      return idbClient.getPerson(personId);
+      const person = await idbClient.getPerson(personId);
+      return person;
     },
   };
 }

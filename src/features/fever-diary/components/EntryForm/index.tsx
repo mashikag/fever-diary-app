@@ -20,7 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import PersonCombobox from "@/features/persons/components/PersonCombobox";
-import { DateTimePicker, TimePicker } from "@/components/ui/date-time-picker";
+import { DatetimePicker } from "@/components/ui/date-time-picker";
 import { Switch } from "@/components/ui/switch";
 import { useMemo } from "react";
 import medications from "@/features/fever-diary/utils/medications";
@@ -62,22 +62,17 @@ function EntryForm({ defaultValues, onSubmit }: EntryFormProps) {
             };
 
             return (
-              <FormItem className="grid grid-cols-2 gap-x-8 justify-start">
-                <FormLabel className="text-left">Date</FormLabel>
-                <FormLabel className="text-left">Time</FormLabel>
-                <FormControl className="text-left">
-                  <DateTimePicker
+              <FormItem className="flex flex-col items-start">
+                <FormLabel>Date</FormLabel>
+                <FormControl>
+                  <DatetimePicker
                     value={field.value}
+                    format={[
+                      ["days", "months", "years"],
+                      ["hours", "minutes"],
+                    ]}
+                    dtOptions={{ hour12: false }}
                     onChange={handleDateTimeChange}
-                    granularity="day"
-                  />
-                </FormControl>
-                <FormControl className="justify-start">
-                  <TimePicker
-                    date={field.value}
-                    onChange={handleDateTimeChange}
-                    hourCycle={24}
-                    granularity="minute"
                   />
                 </FormControl>
                 <FormMessage />
