@@ -11,34 +11,9 @@ export const useEditPersonMutation = () => {
       await client.putPerson(person);
       return person;
     },
-
-    onMutate: async (editedPerson) => {
-      // Cancel any outgoing refetches to avoid overwriting our optimistic update
-      await queryClient.cancelQueries({ queryKey: ["persons"] });
-
-      // Snapshot the previous value
-      const previousPersons = queryClient.getQueryData<Person[]>(["persons"]);
-
-      // Perform optimistic update
-      queryClient.setQueryData<Person[]>(["persons"], (old) => {
-        if (!old) return [editedPerson];
-        return old.map((p) => (p.id === editedPerson.id ? editedPerson : p));
-      });
-
-      // Return context object with snapshot
-      return { previousPersons };
-    },
-
-    // If mutation fails, use context to roll back
-    onError: (err, _editedPerson, context) => {
-      queryClient.setQueryData(["persons"], context?.previousPersons);
-      // Optionally display error to user
-      console.error("Failed to update person:", err);
-    },
-
-    // After success or error, always refetch to ensure cache consistency
-    onSettled: () => {
+    onSuccess: ({ id }) => {
       queryClient.invalidateQueries({ queryKey: ["persons"] });
+      queryClient.invalidateQueries({ queryKey: ["person", id] });
     },
   });
 

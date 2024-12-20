@@ -24,44 +24,31 @@ function EditPersonPage() {
   const { ref } = Route.useSearch();
   const { data: person } = usePerson(personId);
   const navigate = Route.useNavigate();
-  const { mutate: editPerson } = useEditPersonMutation();
-  const { mutate: deletePerson } = useDeletePersonMutation();
+  const { mutateAsync: editPerson } = useEditPersonMutation();
+  const { mutateAsync: deletePerson } = useDeletePersonMutation();
 
-  const handleSubmit = (person: Omit<Person, "id">) => {
-    return new Promise<void>((resolve, reject) => {
-      editPerson(
-        {
-          id: personId,
-          ...person,
-        },
-        {
-          onSuccess: () => {
-            resolve();
-            toast.success("Person saved successfully");
-          },
-          onError: () => {
-            reject();
-            toast.error("Failed to save person");
-          },
-        }
-      );
-    });
+  const handleSubmit = async (person: Omit<Person, "id">) => {
+    try {
+      await editPerson({
+        id: personId,
+        ...person,
+      });
+      toast.success("Person saved successfully");
+    } catch (error) {
+      console.error("Error saving person:", error);
+      toast.error("Failed to save person");
+    }
   };
 
-  const handlePersonDelete = () => {
-    return new Promise<void>((resolve, reject) => {
-      deletePerson(personId, {
-        onSuccess: () => {
-          resolve();
-          navigate({ to: "/entries" });
-          toast.success("Person deleted successfully");
-        },
-        onError: () => {
-          reject();
-          toast.error("Failed to delete person");
-        },
-      });
-    });
+  const handlePersonDelete = async () => {
+    try {
+      await deletePerson(personId);
+      navigate({ to: "/entries" });
+      toast.success("Person deleted successfully");
+    } catch (error) {
+      console.error("Error deleting person:", error);
+      toast.error("Failed to delete person");
+    }
   };
 
   return (
