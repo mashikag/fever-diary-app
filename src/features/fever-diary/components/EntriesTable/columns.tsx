@@ -29,7 +29,7 @@ export const columns: ColumnDef<FeverDiaryEntry>[] = [
     sortingFn: "datetime",
   },
   {
-    accessorKey: "temperature",
+    accessorKey: "tempC",
     header: "Temperature",
   },
   {
