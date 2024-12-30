@@ -24,6 +24,9 @@ import { DatetimePicker } from "@/components/ui/date-time-picker";
 import { Switch } from "@/components/ui/switch";
 import { useMemo } from "react";
 import medications from "@/features/fever-diary/utils/medications";
+import { MedicationCalculatorFactory } from "@/lib/medicationCalculator/medicationCalculatorFactory";
+import { usePerson } from "@/features/persons/hooks/usePerson";
+import { Calculator } from "lucide-react";
 
 export type EntryFormValues = z.infer<typeof entrySchema>;
 
@@ -46,8 +49,11 @@ function EntryForm({ defaultValues, onSubmit }: EntryFormProps) {
     defaultValues: defaults,
   });
 
+  const personId = form.watch("personId");
   const showTemperature = form.watch("showTemperature");
   const showMedication = form.watch("medication.show");
+
+  const { data: person } = usePerson(personId);
 
   return (
     <Form {...form}>
@@ -163,7 +169,7 @@ function EntryForm({ defaultValues, onSubmit }: EntryFormProps) {
 
           <div
             className={`transform transition-all duration-200 ease-in-out space-y-8 ${
-              showMedication ? "opacity-100 max-h-96 pt-6" : "opacity-0 max-h-0 overflow-hidden"
+              showMedication ? "opacity-100 max-h-100 pt-6" : "opacity-0 max-h-0 overflow-hidden"
             }`}
           >
             <FormField
@@ -302,9 +308,31 @@ function EntryForm({ defaultValues, onSubmit }: EntryFormProps) {
                   !disabled && medications[medType].forms.find((f) => f.form === medFormType);
                 const doseUnit = medForm && medForm.doseUnit ? `(${medForm.doseUnit})` : "";
 
+                const recommendationDisabled = disabled || !person;
+                const handleCalculateRecommendedDose = () => {
+                  if (recommendationDisabled) {
+                    return;
+                  }
+
+                  if (person && !person.weight) {
+                    // TODO: Handle the case where the person has no weight, may display a popup asking to enter weight
+                    return;
+                  }
+
+                  const calculator = MedicationCalculatorFactory.createCalculator(medType, {
+                    dob: person.dateOfBirth,
+                    weight: person.weight,
+                    medForm: medFormType,
+                    medStrength: medFormStrength,
+                  });
+                  const recommendedDose = calculator.calcRecommendedDose();
+                  form.setValue("medication.value.form.dose", recommendedDose);
+                };
+
                 return (
                   <FormItem>
                     <FormLabel disabled={disabled}>Medication Dosage {doseUnit}</FormLabel>
+
                     <FormControl>
                       <Input
                         type="number"
@@ -316,6 +344,17 @@ function EntryForm({ defaultValues, onSubmit }: EntryFormProps) {
                         }
                       />
                     </FormControl>
+
+                    <Button
+                      variant="ghost"
+                      onClick={handleCalculateRecommendedDose}
+                      type="button"
+                      disabled={recommendationDisabled}
+                    >
+                      <Calculator />
+                      Calculate recommended dosage for me.
+                    </Button>
+
                     <FormMessage />
                   </FormItem>
                 );

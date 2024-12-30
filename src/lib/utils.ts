@@ -19,3 +19,10 @@ export function toAgeText(birthDate: Date) {
   const age = toAge(birthDate);
   return `${age === 0 ? "< 1" : age} years old`;
 }
+
+export function toAgeInMonths(birthDate: Date) {
+  const today = new Date();
+  const age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  return age * 12 + m;
+}

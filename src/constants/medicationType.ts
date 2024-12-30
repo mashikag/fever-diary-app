@@ -27,6 +27,7 @@ export enum ParacetamolSuppositoryStrength {
 export enum ParacetamolSyrupStrength {
   MgPerMl24 = 24,
   MgPerMl50 = 50,
+  MgPerMl100 = 100,
 }
 
 // Ibuprofen
