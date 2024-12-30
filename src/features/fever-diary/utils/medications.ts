@@ -67,8 +67,12 @@ const medications = {
         doseUnit: "ml",
         variants: [
           {
+            strength: ParacetamolSyrupStrength.MgPerMl100,
+            label: "100mg/ml",
+          },
+          {
             strength: ParacetamolSyrupStrength.MgPerMl24,
-            label: "120/5ml",
+            label: "120mg/5ml",
           },
           {
             strength: ParacetamolSyrupStrength.MgPerMl50,
