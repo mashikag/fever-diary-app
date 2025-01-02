@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { routeTree } from "./routeTree.gen";
 import FeverDiaryIDBClient from "./lib/idbClient";
 import "./index.css";
+import { useScreenWatcher } from "./hooks/useScreenWatcher";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +31,12 @@ declare module "@tanstack/react-router" {
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
-  root.render(
+  root.render(<App />);
+}
+
+function App() {
+  useScreenWatcher();
+  return (
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />

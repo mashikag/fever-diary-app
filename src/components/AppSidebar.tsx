@@ -15,6 +15,7 @@ import {
 } from "./ui/sidebar";
 import { usePersons } from "@/features/persons/hooks/usePersons";
 import { useNavigate } from "@tanstack/react-router";
+import { Button } from "./ui/button";
 
 function PersonsSidebarGroup() {
   const navigate = useNavigate();
@@ -54,7 +55,11 @@ function PersonsSidebarGroup() {
 function AppSidebar() {
   return (
     <Sidebar>
-      <SidebarHeader />
+      <SidebarHeader>
+        <Button>
+          <Plus /> New Entry
+        </Button>
+      </SidebarHeader>
       <SidebarContent>
         <PersonsSidebarGroup />
       </SidebarContent>
